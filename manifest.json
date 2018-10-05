@@ -1,0 +1,7 @@
+{
+  "name": "Cafe 770",
+  "short_name": "Cafe770",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "orientation": "portrait"
+}

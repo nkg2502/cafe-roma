@@ -1,0 +1,8 @@
+{
+  "rules": {
+    "cafe": {
+      ".read": true,
+      ".write": true
+    }
+  }
+}

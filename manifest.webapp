@@ -1,0 +1,22 @@
+{
+  "version": "2.0.0",
+  "name": "Cafe 770",
+  "launch_path": "/index.html",
+  "description": "Order coffee",
+  "developer": {
+    "name": "Taesung Jung",
+    "url": "https://github.com/nkg2502"
+  },
+  "installs_allowed_from": [
+    "*"
+  ],
+  "default_locale": "en",
+  "permissions": {
+  },
+  "locales": {
+    "en": {
+      "name": "Cafe 770",
+      "description": "Order coffee"
+    }
+  }
+}
