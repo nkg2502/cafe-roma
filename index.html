@@ -40,45 +40,25 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.21/moment-timezone-with-data.min.js" crossorigin="anonymous"></script>
 </head>
 <body>
-        <div class="container">
-            <h4 align="right"><a href="/orderlist">Order List</a></h4>
-        </div>
-        <h1 align="center">Cafe 770</h1>
-        <div class="container">
-            <div class="row">
-                <div class="col">
-                    <button type="button" class="btn btn-dark btn-lg btn-block" id="order">Order</button>
-                </div>
-            </div>
-
-            <div class="row"> <div class="col"> <div class="input-group mb-3"> </div> </div> </div>
-
-            <div class="row">
-                <div class="col">
-                    <div class="input-group mb-3 input-group-lg">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">Name</span>
-                        </div>
-                        <input type="text" class="form-control" placeholder="" id="name">
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="row">
-                <div class="col-7"></div>
-                <div class="col">
-                    <button type="button" class="btn btn-secondary " id="addCoffee">+ Add coffee</button>
-                </div>
-            </div>
-
-            <div class="row"> <div class="col"> <div class="input-group mb-3"> </div> </div> </div>
-            <div class="row"> <div class="col"> <div class="input-group mb-3"> </div> </div> </div>
-            <div class="row"> <div class="col"> <div class="input-group mb-3"> </div> </div> </div>
-
+    <h1 align="center">Cafe 770 Order List</h1>
+    <div class="container">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Total</th>
+                        <th scope="col">Pending</th>
+                        <th scope="col">Making</th>
+                        <th scope="col">Cancel</th>
+                        <th scope="col">Done</th>
+                    </tr>
+                </thead>
+                <tbody id="stat"></tbody>
+            </table>
         </div>
 
-        <div class="container" id="coffee-container"></div>
+        <div class="container" id="order-display"> </div>
+    </div>
 
 <!-- Import and configure the Firebase SDK -->
 <!-- These scripts are made available when the app is served or deployed on Firebase Hosting -->
@@ -86,6 +66,6 @@
 <script src="/__/firebase/4.1.3/firebase.js"></script>
 <script src="/__/firebase/init.js"></script>
 
-<script src="/scripts/order.js"></script>
+<script src="/scripts/total-order.js"></script>
 </body>
 </html>

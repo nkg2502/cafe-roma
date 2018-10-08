@@ -18,8 +18,8 @@
         "destination": "/dashboard.html"
       },
       {
-        "source": "/orderlist",
-        "destination": "/total-order.html"
+        "source": "/order",
+        "destination": "/order.html"
       }
     ],
     "headers": [{
