@@ -87,7 +87,7 @@ Cafe.prototype.initLedger = function() {
 
 Cafe.prototype.initButtons = function() {
   document.querySelector('#back').addEventListener('click', () => {
-    window.location.replace('/');
+    window.location.replace('/order');
   });
 };
 

@@ -20,6 +20,22 @@
       {
         "source": "/order",
         "destination": "/order.html"
+      },
+      {
+        "source": "/kakaotalk",
+	"function": "kakaotalk"
+      },
+      {
+        "source": "/kakaotalk/keyboard",
+	"function": "kakaotalk"
+      },
+      {
+        "source": "/kakaotalk/message",
+	"function": "kakaotalk"
+      },
+      {
+        "source": "/kakaotalk/**",
+	"function": "kakaotalk"
       }
     ],
     "headers": [{
