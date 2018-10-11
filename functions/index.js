@@ -21,7 +21,11 @@ const admin = require('firebase-admin');
 admin.initializeApp();
 
 const moment = require('moment-timezone');
-const db = admin.database().ref('cafe/' + moment().tz('America/Los_Angeles').format('YYYYMMDD') + '/orderList');
+const dbName = 'cafe/' + moment().tz('America/Los_Angeles').format('YYYYMMDD') + '/orderList';
+const db = admin.database().ref(dbName);
+const orderDb = function (id) {
+    return admin.database().ref(dbName + '/' + id);
+};
 
 const express = require('express')
 const bodyParser = require('body-parser');
@@ -46,10 +50,13 @@ bot.get('/keyboard', (req, res) => {
 bot.post('/message', (req, res) => {
     switch (req.body.content) {
         case 'Check All':
-            db.once('value').then(allOrderList => {
-                const orderList = allOrderList.val();
+        case 'Find My Order': // need to split
+            const predicate = (req.body.content === 'Check All') ? (e => e) : (e => e && !e.time.end);
 
-                const keyboardList = orderList.reverse().filter(e => e).map((order) => {
+            db.once('value').then(allOrderList => {
+                const orderList = allOrderList.val() || [];
+
+                const keyboardList = orderList.reverse().filter(predicate).map((order) => {
                     const quantity = order.order.reduce((sum, q) => {
                         sum[0] += q.quantity;
                         if (q.state === 'done' || q.state === 'cancel')
@@ -62,34 +69,7 @@ bot.post('/message', (req, res) => {
                 res.set('Content-Type', 'application/json; charset=utf-8');
                 res.status(200).send(JSON.stringify({
                     "message": {
-                        "text": JSON.stringify(req.body.content)
-                    },
-                    keyboard: {
-                        "type": "buttons",
-                        "buttons": keyboardList.concat(keyboard.buttons)
-                    }
-                }));
-            });
-            break;
-        case 'Find My Order':
-            db.once('value').then(allOrderList => {
-                const orderList = allOrderList.val();
-
-                const keyboardList = orderList.reverse().filter(e => e && !e.time.end).map((order) => {
-                    const quantity = order.order.reduce((sum, q) => {
-                        sum[0] += q.quantity;
-                        if (q.state === 'done' || q.state === 'cancel')
-                            sum[1] += q.quantity;
-                        return sum;
-                    }, [0, 0]);
-
-                    return 'Order ' + order.id + ' *' + order.name + '* (' + quantity[1] + ' of ' + quantity[0] + ')';
-                });
-
-                res.set('Content-Type', 'application/json; charset=utf-8');
-                res.status(200).send(JSON.stringify({
-                    "message": {
-                        "text": JSON.stringify(req.body.content)
+                        "text": orderList.length ? "Please select an order" : 'Nothing.'
                     },
                     keyboard: {
                         "type": "buttons",
@@ -108,24 +88,46 @@ bot.post('/message', (req, res) => {
                },
               "keyboard": keyboard
             }));
+            break;
         default:
-            if (req.body.content.startsWith('[Done]')) {
+            if (!req.body.content) {
                 res.set('Content-Type', 'application/json; charset=utf-8');
                 res.status(200).send(JSON.stringify({
                     "message": {
-                        "text": 'Grab your coffee!',
+                        "text": JSON.stringify(req.body),
                     },
                     "keyboard": keyboard
                 }));
- 
+            } else if (req.body.content.startsWith('[Done]')) {
+                const id = req.body.content.split(' ')[2];
+                orderDb(id).once('value').then(eachOrderList => {
+                    const orderItem = eachOrderList.val();
+                    const t = orderItem.order.map((i) => '(' + i.quantity + ') ' + (i.isIced ? 'Iced ' : 'Hot ') + i.menu + '/' + i.option + ' [' + i.state + ']');
+                    const text = 'Order #' + orderItem.id + '\n*'  + orderItem.name + '*\n3 of 7\n' + t.join('\n');  
+
+                    res.set('Content-Type', 'application/json; charset=utf-8');
+                    res.status(200).send(JSON.stringify({
+                        "message": {
+                            "text": text
+                        },
+                        "keyboard": keyboard
+                    }));
+                });
             } else if (req.body.content.startsWith('Order')) {
-                res.set('Content-Type', 'application/json; charset=utf-8');
-                res.status(200).send(JSON.stringify({
-                    "message": {
-                        "text": 'please wait!',
-                    },
-                    "keyboard": keyboard
-                }));
+                const id = req.body.content.split(' ')[1];
+                orderDb(id).once('value').then(eachOrderList => {
+                    const orderItem = eachOrderList.val();
+                    const t = orderItem.order.map((i) => '(' + i.quantity + ') ' + (i.isIced ? 'Iced ' : 'Hot ') + i.menu + '/' + i.option + ' [' + i.state + ']');
+                    const text = 'Order #' + orderItem.id + '\n*'  + orderItem.name + '*\n3 of 7\n' + t.join('\n');  
+
+                    res.set('Content-Type', 'application/json; charset=utf-8');
+                    res.status(200).send(JSON.stringify({
+                        "message": {
+                            "text": text
+                        },
+                        "keyboard": keyboard
+                    }));
+                });
             } else {
                 res.set('Content-Type', 'application/json; charset=utf-8');
                 res.status(200).send(JSON.stringify({
