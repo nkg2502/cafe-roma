@@ -102,7 +102,7 @@ bot.post('/message', (req, res) => {
                 const id = req.body.content.split(' ')[2];
                 orderDb(id).once('value').then(eachOrderList => {
                     const orderItem = eachOrderList.val();
-                    const t = orderItem.order.map((i) => '(' + i.quantity + ') ' + (i.isIced ? 'Iced ' : 'Hot ') + i.menu + '/' + i.option + ' [' + i.state + ']');
+                    const menuText = orderItem.order.map((i) => '(' + i.quantity + ') ' + (i.isIced ? 'Iced ' : 'Hot ') + i.menu + (i.option ? '/' + i.option : '') + ' [' + i.state + ']');
                     const quantity = orderItem.order.reduce((sum, q) => {
                         sum[0] += q.quantity;
                         if (q.state === 'done' || q.state === 'cancel')
@@ -110,7 +110,7 @@ bot.post('/message', (req, res) => {
                         return sum;
                     }, [0, 0]);
 
-                    const text = 'Order #' + orderItem.id + '\n*'  + orderItem.name + '*\n' + quantity[1] + ' of ' + quantity[0] + '\n' + t.join('\n');  
+                    const text = 'Order #' + orderItem.id + '\n*'  + orderItem.name + '*\n' + quantity[1] + ' of ' + quantity[0] + '\n' + menuText.join('\n');  
 
                     res.set('Content-Type', 'application/json; charset=utf-8');
                     res.status(200).send(JSON.stringify({
@@ -124,7 +124,7 @@ bot.post('/message', (req, res) => {
                 const id = req.body.content.split(' ')[1];
                 orderDb(id).once('value').then(eachOrderList => {
                     const orderItem = eachOrderList.val();
-                    const t = orderItem.order.map((i) => '(' + i.quantity + ') ' + (i.isIced ? 'Iced ' : 'Hot ') + i.menu + '/' + i.option + ' [' + i.state + ']');
+                    const menuText = orderItem.order.map((i) => '(' + i.quantity + ') ' + (i.isIced ? 'Iced ' : 'Hot ') + i.menu + (i.option ? '/' + i.option : '') + ' [' + i.state + ']');
                     const quantity = orderItem.order.reduce((sum, q) => {
                         sum[0] += q.quantity;
                         if (q.state === 'done' || q.state === 'cancel')
@@ -132,7 +132,7 @@ bot.post('/message', (req, res) => {
                         return sum;
                     }, [0, 0]);
 
-                    const text = 'Order #' + orderItem.id + '\n*'  + orderItem.name + '*\n' + quantity[1] + ' of ' + quantity[0] + '\n' + t.join('\n');  
+                    const text = 'Order #' + orderItem.id + '\n*'  + orderItem.name + '*\n' + quantity[1] + ' of ' + quantity[0] + '\n' + menuText.join('\n');  
 
                     res.set('Content-Type', 'application/json; charset=utf-8');
                     res.status(200).send(JSON.stringify({
