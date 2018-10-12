@@ -103,7 +103,14 @@ bot.post('/message', (req, res) => {
                 orderDb(id).once('value').then(eachOrderList => {
                     const orderItem = eachOrderList.val();
                     const t = orderItem.order.map((i) => '(' + i.quantity + ') ' + (i.isIced ? 'Iced ' : 'Hot ') + i.menu + '/' + i.option + ' [' + i.state + ']');
-                    const text = 'Order #' + orderItem.id + '\n*'  + orderItem.name + '*\n3 of 7\n' + t.join('\n');  
+                    const quantity = orderItem.order.reduce((sum, q) => {
+                        sum[0] += q.quantity;
+                        if (q.state === 'done' || q.state === 'cancel')
+                            sum[1] += q.quantity;
+                        return sum;
+                    }, [0, 0]);
+
+                    const text = 'Order #' + orderItem.id + '\n*'  + orderItem.name + '*\n' + quantity[1] + ' of ' + quantity[0] + '\n' + t.join('\n');  
 
                     res.set('Content-Type', 'application/json; charset=utf-8');
                     res.status(200).send(JSON.stringify({
@@ -118,7 +125,14 @@ bot.post('/message', (req, res) => {
                 orderDb(id).once('value').then(eachOrderList => {
                     const orderItem = eachOrderList.val();
                     const t = orderItem.order.map((i) => '(' + i.quantity + ') ' + (i.isIced ? 'Iced ' : 'Hot ') + i.menu + '/' + i.option + ' [' + i.state + ']');
-                    const text = 'Order #' + orderItem.id + '\n*'  + orderItem.name + '*\n3 of 7\n' + t.join('\n');  
+                    const quantity = orderItem.order.reduce((sum, q) => {
+                        sum[0] += q.quantity;
+                        if (q.state === 'done' || q.state === 'cancel')
+                            sum[1] += q.quantity;
+                        return sum;
+                    }, [0, 0]);
+
+                    const text = 'Order #' + orderItem.id + '\n*'  + orderItem.name + '*\n' + quantity[1] + ' of ' + quantity[0] + '\n' + t.join('\n');  
 
                     res.set('Content-Type', 'application/json; charset=utf-8');
                     res.status(200).send(JSON.stringify({
