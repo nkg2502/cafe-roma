@@ -69,7 +69,7 @@ bot.post('/message', (req, res) => {
                 res.set('Content-Type', 'application/json; charset=utf-8');
                 res.status(200).send(JSON.stringify({
                     "message": {
-                        "text": orderList.length ? "Please select an order" : 'Nothing.'
+                        "text": keyboardList.length ? "Please select an order" : 'Nothing.'
                     },
                     keyboard: {
                         "type": "buttons",
